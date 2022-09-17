@@ -409,13 +409,21 @@ class Playlist(EventEmitter, Serializable):
 
         self.entries = new_queue
 
+    def readd_entry_back(self,entry):
+        """
+        Readds an entry to the back of the Playlist, useful for looping
+
+        :param entry The song entry to add back to the end
+        """
+        self.entries.append(entry)
+        self.emit("entry-added", playlist=self, entry=entry)
+
     def _add_entry(
         self, entry: EntryTypes, *, head: bool = False, defer_serialize: bool = False
     ) -> None:
         """
         Handle appending the `entry` to the queue. If the entry is he first,
         the entry will create a future to download itself.
-
         :param: head:  Toggle adding to the front of the queue.
         :param: defer_serialize:  Signal to events that serialization should be deferred.
         """

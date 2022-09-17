@@ -2578,7 +2578,7 @@ class MusicBot(discord.Client):
         e.set_author(
             name=author_name,
             url="https://github.com/Just-Some-Bots/MusicBot",
-            icon_url=avatar_url,
+            #icon_url=self.user.avatar_url,
         )
         return e
 
@@ -3290,6 +3290,20 @@ class MusicBot(discord.Client):
         return Response(
             "\N{OK HAND SIGN} Karaoke mode is now "
             + ["disabled", "enabled"][player.karaoke_mode],
+            delete_after=15,
+        )
+
+    async def cmd_loop(self, player, channel, author):
+        """
+        Usage:
+            {command_prefix}loop
+
+        Activates loop mode. During loop mode, all played tracks will be re added to the back of the queue.
+        """
+        player.loop_mode = not player.loop_mode
+        return Response(
+            "\N{OK HAND SIGN} Loop mode is now "
+            + ["disabled", "enabled"][player.loop_mode],
             delete_after=15,
         )
 

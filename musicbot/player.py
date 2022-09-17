@@ -124,6 +124,7 @@ class MusicPlayer(EventEmitter, Serializable):
         self.karaoke_mode: bool = False
         self.guild_or_net_unavailable: bool = False
         self.paused_auto: bool = False
+        self.loop_mode = False
 
         self._volume = bot.config.default_volume
         self._play_lock = asyncio.Lock()
@@ -259,7 +260,6 @@ class MusicPlayer(EventEmitter, Serializable):
         This function is responsible tidying the queue post-playback,
         propagating player error or finished-playing events, and
         triggering the media file cleanup task.
-
         :param: error:  An exception, if any, raised by playback.
         """
         # Ensure the stderr stream reader for ffmpeg is exited.
@@ -270,6 +270,8 @@ class MusicPlayer(EventEmitter, Serializable):
             self._stderr_future.set_result(True)
 
         entry = self._current_entry
+        if self.loop_mode:
+            self.playlist.readd_entry_back(entry)
         if entry is None:
             log.debug("Playback finished, but _current_entry is None.")
             return
